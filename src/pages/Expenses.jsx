@@ -103,14 +103,6 @@ function Expenses() {
                 {expenses.map(exp => (
                     <li key={exp.id}>
                         {exp.title} - ₹{exp.amount} ({exp.category})
-                    </li>
-                ))}
-            </ul>
-
-            <ul>
-                {expenses.map(exp => (
-                    <li key={exp.id}>
-                        {exp.title} - ₹{exp.amount} ({exp.category})
                         <button onClick={() => handleDelete(exp.id)}>
                             Delete
                         </button>
