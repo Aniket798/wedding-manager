@@ -9,6 +9,7 @@ function Expenses() {
         date: '',
         notes: ''
     })
+    const [editingId, setEditingId] = useState(null)
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -23,16 +24,32 @@ function Expenses() {
             prev.filter(exp => exp.id !== id)
         )
     }
+    const handleEdit = (expense) => {
+        setFormData(expense)
+        setEditingId(expense.id)
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        const newExpense = {
-            id: Date.now(),
-            ...formData,
-            amount: Number(formData.amount)
+        if (editingId) {
+            setExpenses(prev =>
+                prev.map(exp =>
+                    exp.id === editingId
+                        ? { ...exp, ...formData }
+                        : exp
+                )
+            )
+            setEditingId(null)
+        } else {
+            const newExpense = {
+                id: Date.now(),
+                ...formData,
+                amount: Number(formData.amount)
+            }
+            setExpenses(prev => [...prev, newExpense])
         }
-        setExpenses(prev => [...prev, newExpense])
+
         setFormData({
             title: '',
             category: 'Food',
@@ -40,6 +57,7 @@ function Expenses() {
             date: '',
             notes: ''
         })
+
     }
     const totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0)
 
@@ -105,6 +123,9 @@ function Expenses() {
                         {exp.title} - ₹{exp.amount} ({exp.category})
                         <button onClick={() => handleDelete(exp.id)}>
                             Delete
+                        </button>
+                        <button onClick={() => handleEdit(exp)}>
+                              {editingId ? "pending update..." : "Edit Expense"}
                         </button>
                     </li>
                 ))}
