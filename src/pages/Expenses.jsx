@@ -1,7 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function Expenses() {
-    const [expenses, setExpenses] = useState([])
+    const [expenses, setExpenses] = useState(() => {
+        const saved = localStorage.getItem('expenses')
+        return saved ? JSON.parse(saved) : []
+    })
+
     const [formData, setFormData] = useState({
         title: '',
         category: 'Food',
@@ -10,6 +14,21 @@ function Expenses() {
         notes: ''
     })
     const [editingId, setEditingId] = useState(null)
+    const [budget, setBudget] = useState(() => {
+        const savedBudget = localStorage.getItem('budget')
+        return savedBudget ? JSON.parse(savedBudget) : ''
+    })
+
+    useEffect(() => {
+        localStorage.setItem('expenses', JSON.stringify(expenses))
+    }, [expenses])
+
+    useEffect(() => {
+        localStorage.setItem('budget', JSON.stringify(budget))
+    }, [budget])
+
+
+
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -60,11 +79,22 @@ function Expenses() {
 
     }
     const totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0)
+    const remaining = budget - totalSpent
+
 
 
     return (
         <div>
             <h1>Wedding Expenses</h1>
+            <div>
+                <h2>Set Wedding Budget</h2>
+                <input
+                    type="number"
+                    placeholder="Enter total budget"
+                    value={budget}
+                    onChange={(e) => setBudget(Number(e.target.value))}
+                />
+            </div>
 
             <form onSubmit={handleSubmit}>
                 <input
@@ -116,7 +146,11 @@ function Expenses() {
             </form>
 
             <h2>Total Spent: ₹{totalSpent}</h2>
-
+            <h2>Total Budget: ₹{budget}</h2>
+            <h2>Total Spent: ₹{totalSpent}</h2>
+            <h2 style={{ color: remaining < 0 ? 'red' : 'green' }}>
+                Remaining: ₹{remaining}
+            </h2>
             <ul>
                 {expenses.map(exp => (
                     <li key={exp.id}>
@@ -125,7 +159,7 @@ function Expenses() {
                             Delete
                         </button>
                         <button onClick={() => handleEdit(exp)}>
-                              {editingId ? "pending update..." : "Edit Expense"}
+                            {editingId ? "pending update..." : "Edit Expense"}
                         </button>
                     </li>
                 ))}
