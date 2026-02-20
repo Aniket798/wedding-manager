@@ -1,10 +1,59 @@
-import { useEffect, useState } from 'react'
+import { useReducer, useState, useEffect } from 'react'
 
+/* 1️⃣ Initial State */
+const initialState = {
+    expenses: [],
+    budget: '',
+    editingId: null
+}
+
+/* 2️⃣ Reducer Function */
+function reducer(state, action) {
+    switch (action.type) {
+
+        case 'ADD_EXPENSE':
+            return {
+                ...state,
+                expenses: [...state.expenses, action.payload]
+            }
+
+        case 'DELETE_EXPENSE':
+            return {
+                ...state,
+                expenses: state.expenses.filter(
+                    exp => exp.id !== action.payload
+                )
+            }
+
+        case 'UPDATE_EXPENSE':
+            return {
+                ...state,
+                expenses: state.expenses.map(exp =>
+                    exp.id === action.payload.id
+                        ? action.payload
+                        : exp
+                ),
+                editingId: null
+            }
+
+        case 'SET_BUDGET':
+            return {
+                ...state,
+                budget: action.payload
+            }
+
+        case 'SET_EDITING_ID':
+            return {
+                ...state,
+                editingId: action.payload
+            }
+
+        default:
+            return state
+    }
+}
 function Expenses() {
-    const [expenses, setExpenses] = useState(() => {
-        const saved = localStorage.getItem('expenses')
-        return saved ? JSON.parse(saved) : []
-    })
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     const [formData, setFormData] = useState({
         title: '',
@@ -13,19 +62,13 @@ function Expenses() {
         date: '',
         notes: ''
     })
-    const [editingId, setEditingId] = useState(null)
-    const [budget, setBudget] = useState(() => {
-        const savedBudget = localStorage.getItem('budget')
-        return savedBudget ? JSON.parse(savedBudget) : ''
-    })
+    useEffect(() => {
+        localStorage.setItem('expenses', JSON.stringify(state.JSONexpenses))
+    }, [state.expenses])
 
     useEffect(() => {
-        localStorage.setItem('expenses', JSON.stringify(expenses))
-    }, [expenses])
-
-    useEffect(() => {
-        localStorage.setItem('budget', JSON.stringify(budget))
-    }, [budget])
+        localStorage.setItem('budget', JSON.stringify(state.budget))
+    }, [state.budget])
 
 
 
@@ -39,34 +82,41 @@ function Expenses() {
     }
 
     const handleDelete = (id) => {
-        setExpenses(prev =>
-            prev.filter(exp => exp.id !== id)
-        )
+        dispatch({
+            type: 'DELETE_EXPENSE',
+            payload: id
+        })
     }
     const handleEdit = (expense) => {
         setFormData(expense)
-        setEditingId(expense.id)
+        dispatch({
+            type: 'SET_EDITING_ID',
+            payload: expense.id
+        })
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if (editingId) {
-            setExpenses(prev =>
-                prev.map(exp =>
-                    exp.id === editingId
-                        ? { ...exp, ...formData }
-                        : exp
-                )
-            )
-            setEditingId(null)
+        if (state.editingId) {
+            dispatch({
+                type: 'UPDATE_EXPENSE',
+                payload: {
+                    id: state.editingId,
+                    ...formData,
+                    amount: Number(formData.amount)
+                }
+            })
+
         } else {
-            const newExpense = {
-                id: Date.now(),
-                ...formData,
-                amount: Number(formData.amount)
-            }
-            setExpenses(prev => [...prev, newExpense])
+            dispatch({
+                type: 'ADD_EXPENSE',
+                payload: {
+                    id: Date.now(),
+                    ...formData,
+                    amount: Number(formData.amount)
+                }
+            })
         }
 
         setFormData({
@@ -78,8 +128,11 @@ function Expenses() {
         })
 
     }
-    const totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0)
-    const remaining = budget - totalSpent
+    const totalSpent = state.expenses.reduce(
+        (sum, item) => sum + item.amount,
+        0
+    )
+    const remaining = state.budget - totalSpent
 
 
 
@@ -91,8 +144,11 @@ function Expenses() {
                 <input
                     type="number"
                     placeholder="Enter total budget"
-                    value={budget}
-                    onChange={(e) => setBudget(Number(e.target.value))}
+                    value={state.budget}
+                    onChange={(e) => dispatch({
+                        type: 'SET_BUDGET', 
+                        payload: Number(e.target.value)
+                    })}
                 />
             </div>
 
@@ -146,13 +202,12 @@ function Expenses() {
             </form>
 
             <h2>Total Spent: ₹{totalSpent}</h2>
-            <h2>Total Budget: ₹{budget}</h2>
-            <h2>Total Spent: ₹{totalSpent}</h2>
+            <h2>Total Budget: ₹{state.budget}</h2>
             <h2 style={{ color: remaining < 0 ? 'red' : 'green' }}>
                 Remaining: ₹{remaining}
             </h2>
             <ul>
-                {expenses.map(exp => (
+                {state.expenses.map(exp => (
                     <li key={exp.id}>
                         {exp.title} - ₹{exp.amount} ({exp.category})
                         <button onClick={() => handleDelete(exp.id)}>
