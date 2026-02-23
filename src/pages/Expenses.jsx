@@ -47,6 +47,11 @@ function reducer(state, action) {
                 ...state,
                 editingId: action.payload
             }
+        case 'LOAD_EXPENSES':
+            return {
+                ...state,
+                expenses: action.payload
+            }
 
         default:
             return state
@@ -63,12 +68,28 @@ function Expenses() {
         notes: ''
     })
     useEffect(() => {
-        localStorage.setItem('expenses', JSON.stringify(state.JSONexpenses))
-    }, [state.expenses])
+        fetch('http://localhost:5000/expenses')
+            .then(res => res.json())
+            .then(data => {
+                dispatch({
+                    type: 'LOAD_EXPENSES',
+                    payload: data
+                })
+            })
+    }, [])
 
     useEffect(() => {
-        localStorage.setItem('budget', JSON.stringify(state.budget))
-    }, [state.budget])
+        fetch('http://localhost:5000/budget')
+            .then(res => res.json())
+            .then(data => {
+                if (data.length > 0) {
+                    dispatch({
+                        type: 'SET_BUDGET',
+                        payload: data[0].total
+                    })
+                }
+            })
+    }, [])
 
 
 
@@ -86,6 +107,10 @@ function Expenses() {
             type: 'DELETE_EXPENSE',
             payload: id
         })
+
+        fetch(`http://localhost:5000/expenses/${id}`, {
+            method: 'DELETE'
+        })
     }
     const handleEdit = (expense) => {
         setFormData(expense)
@@ -98,25 +123,38 @@ function Expenses() {
     const handleSubmit = (e) => {
         e.preventDefault()
 
+        const expenseData = {
+            id: state.editingId || Date.now(),
+            ...formData,
+            amount: Number(formData.amount)
+        }
+
+
         if (state.editingId) {
-            dispatch({
-                type: 'UPDATE_EXPENSE',
-                payload: {
-                    id: state.editingId,
-                    ...formData,
-                    amount: Number(formData.amount)
-                }
+            fetch(`http://localhost:5000/expenses/${state.editingId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(expenseData)
             })
+                .then(() => {
+                    dispatch({
+                        type: 'UPDATE_EXPENSE',
+                        payload: expenseData
+                    })
+                })
 
         } else {
-            dispatch({
-                type: 'ADD_EXPENSE',
-                payload: {
-                    id: Date.now(),
-                    ...formData,
-                    amount: Number(formData.amount)
-                }
+            fetch('http://localhost:5000/expenses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(expenseData)
             })
+                .then(() => {
+                    dispatch({
+                        type: 'ADD_EXPENSE',
+                        payload: expenseData
+                    })
+                })
         }
 
         setFormData({
@@ -145,10 +183,20 @@ function Expenses() {
                     type="number"
                     placeholder="Enter total budget"
                     value={state.budget}
-                    onChange={(e) => dispatch({
-                        type: 'SET_BUDGET', 
-                        payload: Number(e.target.value)
-                    })}
+                    onChange={(e) => {
+                        const value = Number(e.target.value)
+
+                        dispatch({
+                            type: 'SET_BUDGET',
+                            payload: value
+                        })
+
+                        fetch('http://localhost:5000/budget', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ total: value })
+                        })
+                    }}
                 />
             </div>
 
@@ -214,7 +262,9 @@ function Expenses() {
                             Delete
                         </button>
                         <button onClick={() => handleEdit(exp)}>
-                            {editingId ? "pending update..." : "Edit Expense"}
+                            {state.editingId === exp.id
+                                ? "pending update..."
+                                : "Edit Expense"}
                         </button>
                     </li>
                 ))}
