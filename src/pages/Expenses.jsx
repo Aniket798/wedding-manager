@@ -4,6 +4,8 @@ import ExpenseForm from '../components/ExpenseForm'
 import ExpenseList from '../components/ExpenseList'
 import Summary from '../components/Summary'
 import { ExpenseContext } from '../context/ExpenseContext'
+import { useExpenses } from '../hooks/useExpenses'
+import { useBudget } from '../hooks/useBudget'
 
 
 function Expenses() {
@@ -16,29 +18,8 @@ function Expenses() {
         date: '',
         notes: ''
     })
-    useEffect(() => {
-        fetch('http://localhost:5000/expenses')
-            .then(res => res.json())
-            .then(data => {
-                dispatch({
-                    type: 'LOAD_EXPENSES',
-                    payload: data
-                })
-            })
-    }, [])
-
-    useEffect(() => {
-        fetch('http://localhost:5000/budget')
-            .then(res => res.json())
-            .then(data => {
-                if (data.length > 0) {
-                    dispatch({
-                        type: 'SET_BUDGET',
-                        payload: data[0].total
-                    })
-                }
-            })
-    }, [])
+    useExpenses()
+    useBudget()
 
     const totalSpent = state.expenses.reduce(
         (sum, item) => sum + item.amount,
