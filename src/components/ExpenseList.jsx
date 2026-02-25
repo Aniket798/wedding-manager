@@ -25,7 +25,17 @@ function ExpenseList() {
         <ul>
             {state.expenses.map(exp => (
                 <li key={exp.id}>
-                    {exp.title} - ₹{exp.amount} ({exp.category})
+                    <strong>{exp.title}</strong><br />
+                    Category: {exp.category} <br />
+                    Total: ₹{exp.amount} <br />
+                    Paid: ₹{exp.paid} <br />
+                    Date: {exp.date} <br />
+                    <span style={{
+                        color: exp.amount - exp.paid > 0 ? 'red' : 'green'
+                    }}>
+                        Remaining: ₹{exp.amount - exp.paid}
+                    </span> <br />
+                   
 
                     <button className="btn-primary" style={{ background: "red", color: "white" }} onClick={() => handleDelete(exp.id)}>
                         Delete

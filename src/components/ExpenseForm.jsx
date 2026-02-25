@@ -18,7 +18,8 @@ function ExpenseForm({ formData, setFormData }) {
         const expenseData = {
             id: state.editingId || Date.now(),
             ...formData,
-            amount: Number(formData.amount)
+            amount: Number(formData.amount),
+            paid: Number(formData.paid || 0)
         }
 
 
@@ -53,6 +54,7 @@ function ExpenseForm({ formData, setFormData }) {
             title: '',
             category: 'Food',
             amount: '',
+            paid: '',
             date: '',
             notes: ''
         })
@@ -60,7 +62,7 @@ function ExpenseForm({ formData, setFormData }) {
     }
 
     return (
-        <form onSubmit={state.handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <h1>Add wedding Details</h1>
             <input
                 type="text"
@@ -91,7 +93,13 @@ function ExpenseForm({ formData, setFormData }) {
                 onChange={handleChange}
                 required
             />
-
+            <input
+                type="number"
+                name="paid"
+                placeholder="Paid Amount"
+                value={formData.paid}
+                onChange={handleChange}
+            />
             <input
                 type="date"
                 name="date"

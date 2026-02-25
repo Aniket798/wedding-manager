@@ -12,6 +12,7 @@ function Expenses() {
         title: '',
         category: 'Food',
         amount: '',
+        paid: '',
         date: '',
         notes: ''
     })
@@ -44,6 +45,12 @@ function Expenses() {
         0
     )
 
+    const totalPaid = state.expenses.reduce(
+        (sum, item) => sum + item.paid,
+        0
+    )
+
+
     return (
         <div>
             <h1>Wedding Expenses</h1>
@@ -62,6 +69,7 @@ function Expenses() {
             />
             <Summary
                 totalSpent={totalSpent}
+                totalPaid={totalPaid}
                 budget={state.budget} />
         </div >
     )
