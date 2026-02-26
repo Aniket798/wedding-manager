@@ -1,7 +1,8 @@
 import { useContext } from 'react'
 import { ExpenseContext } from '../context/ExpenseContext'
 
-function ExpenseList() {
+function ExpenseList({handleEdit}) {
+    console.log("ExpenseList Render");
     const { state, dispatch } = useContext(ExpenseContext)
 
     const handleDelete = (id) => {
@@ -15,12 +16,7 @@ function ExpenseList() {
         })
     }
 
-    const handleEdit = (expense) => {
-        dispatch({
-            type: 'SET_EDITING_ID',
-            payload: expense.id
-        })
-    }
+   
     return (
         <ul>
             {state.expenses.map(exp => (
@@ -35,7 +31,7 @@ function ExpenseList() {
                     }}>
                         Remaining: ₹{exp.amount - exp.paid}
                     </span> <br />
-                   
+
 
                     <button className="btn-primary" style={{ background: "red", color: "white" }} onClick={() => handleDelete(exp.id)}>
                         Delete
