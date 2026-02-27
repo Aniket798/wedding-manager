@@ -27,6 +27,7 @@ function BudgetSection() {
             <input
                 type="number"
                 value={state.budget}
+                style={inputStyle}
                 onChange={(e) => {
                     const value = Number(e.target.value)
 
