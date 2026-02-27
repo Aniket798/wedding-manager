@@ -12,6 +12,14 @@ function ExpenseForm({ formData, setFormData }) {
         }))
     }
 
+    const inputStyle = {
+        width: "100%",
+        padding: "8px",
+        marginBottom: "12px",
+        borderRadius: "6px",
+        border: "1px solid #ccc"
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault()
 
@@ -62,63 +70,86 @@ function ExpenseForm({ formData, setFormData }) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1>Add wedding Details</h1>
-            <input
-                type="text"
-                name="title"
-                placeholder="Expense Title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-            />
+        <div
+            style={{
+                background: "white",
+                padding: "20px",
+                borderRadius: "12px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                maxWidth: "600px",
+                margin: "20px auto"
+            }}
+        >
+            <form onSubmit={handleSubmit}>
+                <h1>Add wedding Details</h1>
+                <input style={inputStyle}
+                    type="text"
+                    name="title"
+                    placeholder="Expense Title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                />
 
-            <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-            >
-                <option>Food</option>
-                <option>Venue</option>
-                <option>Clothes</option>
-                <option>Gifts</option>
-                <option>Travel</option>
-            </select>
+                <select style={inputStyle}
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                >
+                    <option>Food</option>
+                    <option>Venue</option>
+                    <option>Clothes</option>
+                    <option>Gifts</option>
+                    <option>Travel</option>
+                </select>
 
-            <input
-                type="number"
-                name="amount"
-                placeholder="price"
-                value={formData.amount}
-                onChange={handleChange}
-                required
-            />
-            <input
-                type="number"
-                name="paid"
-                placeholder="Paid Amount"
-                value={formData.paid}
-                onChange={handleChange}
-            />
-            <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-            />
+                <input style={inputStyle}
+                    type="number"
+                    name="amount"
+                    placeholder="price"
+                    value={formData.amount}
+                    onChange={handleChange}
+                    required
+                />
+                <input style={inputStyle}
+                    type="number"
+                    name="paid"
+                    placeholder="Paid Amount"
+                    value={formData.paid}
+                    onChange={handleChange}
+                />
+                <input style={inputStyle}
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    required
+                />
 
-            <textarea
-                name="notes"
-                placeholder="notes"
-                value={formData.notes}
-                onChange={handleChange}
-            />
+                <textarea style={inputStyle}
+                    name="notes"
+                    placeholder="notes"
+                    value={formData.notes}
+                    onChange={handleChange}
+                />
 
-            <button type="submit">
-                {state.editingId ? "Update Expense" : "Add Expense"}
-            </button>
-        </form>
+                <button
+                    type="submit"
+                    style={{
+                        background: "#1677ff",
+                        color: "white",
+                        border: "none",
+                        padding: "10px 16px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        width: "100%",
+                        fontWeight: "bold"
+                    }}
+                >
+                    {state.editingId ? "Update Expense" : "Add Expense"}
+                </button>
+            </form>
+        </div>
     )
 }
 

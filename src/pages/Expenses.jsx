@@ -21,15 +21,15 @@ function Expenses() {
     })
     useExpenses()
     useBudget()
-     const handleEdit = (expense) => {
+    const handleEdit = (expense) => {
         setFormData({
-        title: expense.title,
-        category: expense.category,
-        amount: expense.amount,
-        paid: expense.paid,
-        date: expense.date,
-        notes: expense.notes
-    })
+            title: expense.title,
+            category: expense.category,
+            amount: expense.amount,
+            paid: expense.paid,
+            date: expense.date,
+            notes: expense.notes
+        })
         dispatch({
             type: 'SET_EDITING_ID',
             payload: expense.id
@@ -49,25 +49,33 @@ function Expenses() {
 
 
     return (
-        <div>
-            <h1>Wedding Expenses</h1>
+        <div >
+            <div style={{
+                background: "#f0f2f5",
+                minHeight: "100vh",
+                padding: "40px"
+            }}
+            >
+                <h1 style={{ textAlign: "center" }}>
+                    Wedding Expense Manager
+                </h1>
 
-            <BudgetSection
-                budget={state.budget}
-                dispatch={dispatch}
-            />
+                <BudgetSection
+                    budget={state.budget}
+                    dispatch={dispatch}
+                />
+                <Summary
+                    totalSpent={totalSpent}
+                    totalPaid={totalPaid}
+                    budget={state.budget} />
+                <ExpenseForm
+                    formData={formData}
+                    setFormData={setFormData}
+                />
 
-            <ExpenseForm
-                formData={formData}
-                setFormData={setFormData}
-            />
-
-           <ExpenseList handleEdit={handleEdit} />
-            <Summary
-                totalSpent={totalSpent}
-                totalPaid={totalPaid}
-                budget={state.budget} />
-        </div >
+                <ExpenseList handleEdit={handleEdit} />
+            </div>
+        </div>
     )
 }
 
