@@ -11,7 +11,7 @@ function ExpenseList({ handleEdit }) {
             payload: id
         })
 
-        fetch(`http://localhost:5000/expenses/${id}`, {
+        fetch(`https://wedding-backend-production-aa63.up.railway.app/expenses/${id}`, {
             method: 'DELETE'
         })
     }
@@ -32,6 +32,7 @@ function ExpenseList({ handleEdit }) {
 
     return (
         <ul style={{ padding: 0, maxWidth: "600px", margin: "20px auto" }}>
+            <h4>Expense List</h4>
             {state.expenses.map(exp => (
                 <li key={exp.id}
                     style={{

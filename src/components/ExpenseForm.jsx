@@ -30,9 +30,10 @@ function ExpenseForm({ formData, setFormData }) {
             paid: Number(formData.paid || 0)
         }
 
-
+        //https://wedding-backend-production-aa63.up.railway.app/expenses
+        //http://192.168.1.8:5000/expenses
         if (state.editingId) {
-            fetch(`http://localhost:5000/expenses/${state.editingId}`, {
+            fetch(`https://wedding-backend-production-aa63.up.railway.app/expenses/${state.editingId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(expenseData)
@@ -45,7 +46,7 @@ function ExpenseForm({ formData, setFormData }) {
                 })
 
         } else {
-            fetch('http://localhost:5000/expenses', {
+            fetch('https://wedding-backend-production-aa63.up.railway.app/expenses', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(expenseData)

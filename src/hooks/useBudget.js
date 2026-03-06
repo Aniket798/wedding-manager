@@ -5,7 +5,7 @@ export function useBudget() {
     const { state, dispatch } = useContext(ExpenseContext)
 
     useEffect(() => {
-        fetch('http://localhost:5000/budget')
+        fetch('https://wedding-backend-production-aa63.up.railway.app/budget')
             .then(res => res.json())
             .then(data => {
                 if (data.length > 0) {

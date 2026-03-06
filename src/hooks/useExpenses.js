@@ -6,7 +6,7 @@ export function useExpenses() {
   const { state, dispatch } = useContext(ExpenseContext)
 
   useEffect(() => {
-    fetch('http://localhost:5000/expenses')
+    fetch('http://192.168.1.8:5000/expenses')
       .then(res => res.json())
       .then(data => {
         dispatch({

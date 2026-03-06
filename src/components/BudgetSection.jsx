@@ -35,8 +35,8 @@ function BudgetSection() {
                         type: 'SET_BUDGET',
                         payload: value
                     })
-
-                    fetch('http://localhost:5000/budget', {
+                     //http://192.168.1.8:5000/budget
+                    fetch('https://wedding-backend-production-aa63.up.railway.app/budget', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ total: value })
