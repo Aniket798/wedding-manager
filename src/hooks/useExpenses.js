@@ -6,7 +6,7 @@ export function useExpenses() {
   const { state, dispatch } = useContext(ExpenseContext)
 
   useEffect(() => {
-    fetch('http://192.168.1.8:5000/expenses')
+    fetch('https://wedding-backend-production-aa63.up.railway.app/expenses')
       .then(res => res.json())
       .then(data => {
         dispatch({
